@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Consistent hashing typeahead system dashboard with live telemetry and cluster health monitoring." />
+  <title>CoreTypeahead // Analytics & Control Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Deep space background overlay -->
+  <div class="space-ambient"></div>
+  <div class="glow-orb orb-purple"></div>
+  <div class="glow-orb orb-blue"></div>
+  <div class="glow-orb orb-emerald"></div>
+
+  <div class="app-shell">
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="50%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#10b981" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">CoreTypeahead</span>
+          <span class="brand-tag">v2.0.0</span>
+        </div>
+      </div>
+      <div class="sys-badge">
+        <span class="badge-dot pulse-success"></span>
+        <span class="badge-text">Cluster Online</span>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+      <!-- Left Column: Search Terminal -->
+      <section class="grid-col main-search-col">
+        <div class="panel-card glassmorphic search-panel">
+          <div class="panel-header">
+            <span class="panel-pill">Terminal</span>
+            <h2 class="panel-title">Query Ingestion</h2>
+          </div>
+          <div class="search-box-wrapper" id="search-wrapper">
+            <div class="search-input-container">
+              <span class="input-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                id="search-input" 
+                class="premium-input" 
+                placeholder="Submit search phrase..." 
+                autocomplete="off" 
+                spellcheck="false" 
+                aria-label="Search"
+              />
+              <div class="input-kbd-hint"><kbd>Ctrl</kbd><kbd>K</kbd></div>
+            </div>
+            
+            <!-- Typeahead Dropdown -->
+            <div id="dropdown" class="autocomplete-dropdown hidden"></div>
+          </div>
+
+          <!-- Recent Queries Chips -->
+          <div id="recent-section" class="recent-queries-deck hidden">
+            <h3 class="panel-section-title">Recent Term History</h3>
+            <div id="recent-list" class="chips-container"></div>
+          </div>
+        </div>
+
+        <!-- Debug Logger Console -->
+        <div class="panel-card glassmorphic console-panel">
+          <div class="panel-header">
+            <span class="panel-pill pill-secondary">Console</span>
+            <h2 class="panel-title">Cache Routing Stream</h2>
+          </div>
+          <div class="terminal-container">
+            <div class="terminal-logs" id="terminal-logs">
+              <div class="log-line system-line">[SYSTEM] Awaiting query inputs to stream cache routing lookups...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: System Telemetry & Cluster Map -->
+      <section class="grid-col telemetry-col">
+        <!-- Live Counters -->
+        <div class="panel-card glassmorphic telemetry-panel">
+          <div class="panel-header">
+            <span class="panel-pill">Telemetry</span>
+            <h2 class="panel-title">Real-Time Performance</h2>
+          </div>
+          
+          <div class="performance-overview">
+            <div class="hit-rate-gauge-box">
+              <div class="gauge-value" id="m-hit-rate">0%</div>
+              <div class="gauge-label">Cache Hit Rate</div>
+              <div class="gauge-bar-outer">
+                <div class="gauge-bar-inner" id="m-hit-rate-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-dashboard-grid">
+            <div class="stat-card">
+              <span class="stat-label">Cache Hits</span>
+              <span class="stat-num" id="m-hits">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Cache Misses</span>
+              <span class="stat-num" id="m-misses">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">DB Accesses</span>
+              <span class="stat-num" id="m-db">—</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Avg Latency</span>
+              <span class="stat-num highlighted-stat" id="m-latency">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Distributed Cache Shards Map -->
+        <div class="panel-card glassmorphic shards-panel">
+          <div class="panel-header">
+            <span class="panel-pill pill-emerald">Map</span>
+            <h2 class="panel-title">Redis Consistent Hashing Shards</h2>
+          </div>
+          
+          <div class="redis-cluster-stack">
+            <!-- Node 1 -->
+            <div class="redis-rack-card" id="rack-redis1">
+              <div class="rack-header">
+                <div class="rack-status">
+                  <span class="rack-led node-active"></span>
+                  <span class="rack-name">redis-node-01</span>
+                </div>
+                <div class="rack-port">:6379</div>
+              </div>
+              <div class="rack-progress-box">
+                <div class="rack-stats-row">
+                  <span>Occupancy</span>
+                  <span id="m-redis1-val">0 keys</span>
+                </div>
+                <div class="rack-bar-outer">
+                  <div class="rack-bar-inner" id="m-redis1-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 2 -->
+            <div class="redis-rack-card" id="rack-redis2">
+              <div class="rack-header">
+                <div class="rack-status">
+                  <span class="rack-led node-active"></span>
+                  <span class="rack-name">redis-node-02</span>
+                </div>
+                <div class="rack-port">:6380</div>
+              </div>
+              <div class="rack-progress-box">
+                <div class="rack-stats-row">
+                  <span>Occupancy</span>
+                  <span id="m-redis2-val">0 keys</span>
+                </div>
+                <div class="rack-bar-outer">
+                  <div class="rack-bar-inner" id="m-redis2-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 3 -->
+            <div class="redis-rack-card" id="rack-redis3">
+              <div class="rack-header">
+                <div class="rack-status">
+                  <span class="rack-led node-active"></span>
+                  <span class="rack-name">redis-node-03</span>
+                </div>
+                <div class="rack-port">:6381</div>
+              </div>
+              <div class="rack-progress-box">
+                <div class="rack-stats-row">
+                  <span>Occupancy</span>
+                  <span id="m-redis3-val">0 keys</span>
+                </div>
+                <div class="rack-bar-outer">
+                  <div class="rack-bar-inner" id="m-redis3-bar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Section: Trending Queries -->
+    <section class="trending-section-dashboard">
+      <div class="panel-card glassmorphic trending-panel">
+        <div class="panel-header">
+          <span class="panel-pill pill-violet">Hot</span>
+          <h2 class="panel-title">Globally Trending Queries</h2>
+        </div>
+        <div class="trending-cards-deck" id="trending-list">
+          <div class="trending-skeleton">Loading trending search records...</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# Distribution / packaging
+build/
+-dist/
+*.egg-info/
+*.egg
+
+# Pytest cache
+.pytest_cache/
+
+# MyPy cache
+.mypy_cache/
+
+# Editor backups & settings
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Dotenv files (if any)
+.env
+
+# Data and generated files not needed in repo
+synthetic_test.db
+
+# Logs
+*.log
+
+# Docker files that may be generated locally
+docker-compose.override.yml
